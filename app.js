@@ -47,7 +47,7 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser('S3CRE7'));
+// app.use(cookieParser);
 app.use(flash());
 
 app.use(session(
@@ -63,28 +63,37 @@ require('./config/passport')(app, passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+
 /* Route implementation */
 // app.use('/', routes);
 // app.use('/login', login);
 // app.use('/register', register);
 // app.use('/account', account);
-// app.use('/play', play);
+app.use('/play', play);
 // app.use('/api', api);
 app.use('/api', api);
+
+app.use('/', function(req, res) {
+  res.json('Hello');
+})
 
 require('./config/errorHandlers.js')(app);
 
 var server;
 
 if (process.env.APP_ENV == 'development') {
+    console.log('here1');
     server = require('http').createServer(app).listen(8050, function() {
         console.log("server is listening on port 8050")
     });
 } else {
+    console.log('here2');
     var options = {
         key: fs.readFileSync('./certs/file.pem'),
         cert: fs.readFileSync('./certs/file.crt')
     };
+
     server = require('https').createServer(options, app).listen(8050, function() {
         console.log("server is listening on the port 8050")
     });
